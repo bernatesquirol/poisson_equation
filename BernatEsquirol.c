@@ -169,6 +169,7 @@ void sor(double*x, double*y, double omega, double lambda, double mu, double tole
     for(int i=1;i<n;i++){
         for(int j=1; j<m; j++){
             w[i][j]=0.0;
+            w_next[i][j]=0.0;
         }
     }
     /* for(int i=1;i<n;i++){

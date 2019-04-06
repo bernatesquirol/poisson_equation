@@ -2,3 +2,7 @@
 final/
 
 \.vscode/
+
+*.exe
+
+*.txt

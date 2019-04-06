@@ -1,5 +1,7 @@
 # Memòria
 
+`Bernat Esquirol Juanola`
+
 ### Treball previ
 
 Ens diuen que hem d'utilitzar el [mètode de diferències finites](https://en.wikipedia.org/wiki/Finite_difference_method) Per resoldre:
@@ -10,7 +12,7 @@ Ens diuen que hem d'utilitzar el [mètode de diferències finites](https://en.wi
 $$
 \ u_{xx}(x,y)+u_{yy}(x,y)=f(x,y) ; \forall (x,y)\in D\equiv [a,b]\times[c,d]\in \mathbb{R}
 $$
-El que hem de fer primer de tot és tractar el domini $D$, per tal de convertir-lo en un domini discretitzat, així doncs considerem la graella de punts $(x_i,y_j)$ resultants de dividir $[a,b]$ en $n $ subintervals de mida $hx$ i $[c,d]$ en $m$ de mida $hy$. D'aquesta manera trobarem només els $u_{i,j}=u(x_i,y_j)$, dels punts de la graella, amb $0<i<n $ , $0<j<m $ (no incloem els extrems ja que ja tenim els seus valors).
+El que hem de fer primer de tot és tractar el domini $D​$, per tal de convertir-lo en un domini discretitzat, així doncs considerem la graella de punts $(x_i,y_j)​$ resultants de dividir $[a,b]​$ en $n ​$ subintervals de mida $hx​$ i $[c,d]​$ en $m​$ de mida $hy​$. D'aquesta manera trobarem només els $u_{i,j}=u(x_i,y_j)​$, dels punts de la graella, amb $0<i<n ​$ , $0<j<m ​$ (no incloem els extrems ja que ja tenim els seus valors).
 
 Fixem-nos amb quines són les variables i quines les incògnites del problema: coneixem la $f(x,y)$, l'interval $D$ i $u(x,y)$ a $\partial D$ i volem trobar tots els $u_{i,j}$ de la graella.
 
@@ -149,11 +151,31 @@ A la pràctica s'ha implementat aquests vectors com a matrius $m-1\times n-1$ am
 
 ### Proves
 
-He comprovat amb la graella $n=6; m=5$ que el valor de $\omega=1.4$ és el que aconsegueix minimitzar l'error ($1\times10^{-10}$) i el nombre d'iteracions ($41$) fetes. Per tant farem les comprovacions modificant $n$ i $m​$ amb aquest valor.
+He comprovat amb la graella $n=6; m=5$ que el valor de $\omega=1.4$ és el que aconsegueix minimitzar l'error (tolerance=$1\times10^{-10}$) i el nombre d'iteracions (max=$1000$) fetes. Per tant farem les comprovacions modificant $n$ i $m$ amb aquest valor.
 
-|      | 5x6  |           | 10x12 |           | 25x30 |              | 50x60 |              |
-| ---- | ---- | --------- | ----- | --------- | ----- | ------------ | ----- | ------------ |
-| J    | 145  | tolerance | 562   | tolerance | max   | 0.0000463177 | max   | 0.0010650960 |
-| GS   | 76   | tolerance | 291   | tolerance | max   | 0.0000000008 | max   | 0.0001008817 |
-| SOR  | 50   | tolerance | 195   | tolerance | -     | -            | -     | -            |
+|             | 5x6     |           | 10x12     |           | 25x30     |                | 50x60     |                |
+| ----------- | ------- | --------- | --------- | --------- | --------- | -------------- | --------- | -------------- |
+| $J$         | 145     | tolerance | 562       | tolerance | max       | 0.0000463177   | max       | 0.0010650960   |
+| $GS$        | 76      | tolerance | 291       | tolerance | max       | _0.0000000008_ | max       | _0.0001008817_ |
+| $SOR_{1,4}$ | _41_    | tolerance | _208_     | tolerance | max       | 0.0000000033   | max       | 0.0001877131   |
+|             | **6x5** |           | **12x10** |           | **30x25** |                | **60x50** |                |
+| $J$         | 116     | tolerance | 455       | tolerance | max       | 0.0000138072   | max       | 0.0008877161   |
+| $GS$        | 61      | tolerance | 237       | tolerance | max       | 0.0000000195   | max       | 0.0002667446   |
+| $SOR_{1,4}$ | _41_    | tolerance | _169_     | tolerance | _987_     | tolerance      | max       | _0.0000864609_ |
 
+|           | $SOR_{1,4}$ |
+| --------- | ----------- |
+| **8x25**  | 754         |
+| **10x20** | 508         |
+| **14x14** | 299         |
+| **20x10** | *247*       |
+| **25x8**  | 273         |
+
+### Conclusions
+
+Si mirem els resultats obtinguts en podem treure dos conclusions:
+
+1. $SOR_{1,4}$ és clarament l'algoritme més eficient, només en el cas concret de tenir una $m$ gran i una $n$ més petita està per sota de $GS$, com veiem a la primera taula.
+2. Tots els algoritmes tendeixen a tenir menys error quan la $n$ i $m$ provoquen una graella de quadrats enlloc de rectangles. És a dir, com que tenim un rectangle de $2\times1$ a l'exemple, el més eficient possible és triar una $n=2m$. A la segona taula podem veure com de totes les combinacions que tenen el mateix nombre de caselles dins la graella ($\approx200$) la que troba la solució amb menys iteracions és la que compleix $n=2m$.
+
+Per tant per tenir màxima rapidesa de convergència hauriem d'utilitzar el mètode SOR amb $\omega=1.4$ en una graella de $2m\times m$, en l'exemple donat.
